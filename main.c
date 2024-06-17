@@ -7,17 +7,11 @@ Student: antigo1989@gmail.com
 
 #include "main.h"
 
-/***************************inline function*******************************/
-
-
 //global values
 volatile uint16_t rx_buf = 0x00;
-//volatile uint16_t tx_buf = 0x00;
 
 /*********************************main************************************/
 int main(void) {
-  //Values
-  
   //System init
   SystemInit();
   RCC_Init();
@@ -28,7 +22,6 @@ int main(void) {
   SPI1_Init();
   SPI2_Init();
  
-
   while(1){
     if(rx_buf > 0){
       switch(rx_buf){
@@ -110,11 +103,12 @@ void SPI2_Init(void){
   GPIOB->MODER |= GPIO_MODER_MODER10_1;
   GPIOB->AFR[1] |= (5<<GPIO_AFRH_AFSEL10_Pos);
   GPIOB->PUPDR |= GPIO_PUPDR_PUPD10_0;
-
   //SPI
   RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
   SPI2->CR1 |= (0b101<<SPI_CR1_BR_Pos)|SPI_CR1_MSTR|SPI_CR1_DFF; //42MHz/64 = 656,25kHz 16bit Master
-  SPI2->CR1 |= SPI_CR1_CPHA|SPI_CR1_CPOL|SPI_CR1_LSBFIRST; //mode3 LSB first 1wire transmitt
+  SPI2->CR1 |= SPI_CR1_CPHA|SPI_CR1_CPOL|SPI_CR1_LSBFIRST; //mode3 LSB first 
+  SPI2->CR1 |= SPI_CR1_SSM|SPI_CR1_SSI;
+  SPI2->CR1 |= SPI_CR1_BIDIMODE|SPI_CR1_BIDIOE; //1wire Tx
   SPI2->CR1 |= SPI_CR1_SPE;
 }
 
@@ -123,12 +117,11 @@ void SPI1_Init(void){
   //MISO (A6) SCK (A5) Pins
   GPIOA->MODER |= GPIO_MODER_MODE6_1|GPIO_MODER_MODE5_1;
   GPIOA->AFR[0] |= (5<<GPIO_AFRL_AFSEL6_Pos)|(5<<GPIO_AFRL_AFSEL5_Pos);
-  //GPIOA->PUPDR |= GPIO_PUPDR_PUPD6|GPIO_PUPDR_PUPD6;
   //SPI
   RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
   SPI1->CR1 |= (0b110<<SPI_CR1_BR_Pos)|SPI_CR1_DFF; //84MHz/128 = 656,25kHz 16bit
-  SPI1->CR1 |= SPI_CR1_CPHA|SPI_CR1_CPOL|SPI_CR1_LSBFIRST|SPI_CR1_SSM|SPI_CR1_RXONLY; //mode3 LSB first RXonly 
-  SPI1->CR1 &= ~(SPI_CR1_BIDIMODE|SPI_CR1_SSI|SPI_CR1_MSTR); //slave
+  SPI1->CR1 |= SPI_CR1_CPHA|SPI_CR1_CPOL|SPI_CR1_LSBFIRST|SPI_CR1_BIDIMODE; //mode3 LSB first  1wire
+  SPI1->CR1 &= ~(SPI_CR1_BIDIOE|SPI_CR1_MSTR); //slave Rx
   SPI1->CR2 |= SPI_CR2_RXNEIE; //RX Interrupt
   SPI1->CR1 |= SPI_CR1_SPE;
   NVIC_EnableIRQ(SPI1_IRQn);

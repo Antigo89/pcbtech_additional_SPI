@@ -5,18 +5,11 @@
 #include <stdlib.h>
 #include "stm32f4xx.h"
 
-//Settings
-
-//Description connect
-
 //Constants
 #define LED1 401
 #define LED2 402
 #define LED3 403
 #define CLEAR 0xFF
-
-#define SPI_F8B 0x00
-#define SPI_F16B 0x01
 
 //prototype function
 void send_SPI2(uint16_t data);

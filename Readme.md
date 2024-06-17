@@ -8,8 +8,4 @@ SPI2 connect to SPI1.
 <details><summary><b>Tools</b></summary>
 <div>IDE: Segger Embedded Studio</div>
 <div>Programmer: JLINK</div>
-<div>Connecting: CoolTerm</div>
-</details>
-
-<details><summary><b>Settings in main.h</b></summary>
 </details>
